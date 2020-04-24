@@ -7,7 +7,7 @@ import java.io.IOException;
 public class ProviderTest {
 
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("dubbo-provider.xml");
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("springmvc.xml");
         context.start();
         System.out.println("Dubbo provider is start.....");
         try {

@@ -9,7 +9,6 @@ public class ConsumerTest {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "springmvc.xml" });
         context.start();
-        System.out.println("consumer 启动完毕");
         DemoApi demoApi = (DemoApi) context.getBean("demoApi");
         System.out.println("`"+demoApi.sayHi());
         try {
