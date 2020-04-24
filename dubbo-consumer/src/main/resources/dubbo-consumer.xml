@@ -11,5 +11,29 @@
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
     <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
-    <dubbo:reference interface="com.api.service.DemoApi" id="demoApi"/>
+    <dubbo:reference interface="com.api.service.DemoApi" id="demoApi" filter="tracing" />
+
+    <!-- zipkin相关配置   -->
+    <bean id="sender" class="zipkin2.reporter.beans.OkHttpSenderFactoryBean">
+        <!--  OkHttp方式发送 -->
+        <property name="endpoint" value="http://localhost:9411/api/v2/spans"/>
+    </bean>
+
+    <bean id="tracing" class="brave.spring.beans.TracingFactoryBean">
+        <property name="localServiceName" value="dubbo-consumer"/>
+        <property name="spanReporter">
+            <bean class="zipkin2.reporter.beans.AsyncReporterFactoryBean">
+                <property name="sender" ref="sender"/>
+                <!-- wait up to half a second for any in-flight spans on close -->
+                <property name="closeTimeout" value="500"/>
+            </bean>
+        </property>
+        <property name="currentTraceContext">
+            <bean class="brave.spring.beans.CurrentTraceContextFactoryBean">
+                <property name="scopeDecorators">
+                    <bean class="brave.context.slf4j.MDCScopeDecorator" factory-method="create"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
 </beans>
